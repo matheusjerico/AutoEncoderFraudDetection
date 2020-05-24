@@ -93,19 +93,19 @@ A solução foi desenvolvida utilizando a linguagem de programação Python e o 
 #### 4.1. Aplicar técnica de padronização na feature 'Amount'.
 - Aplicamos a técnica pois a feature apresenta uma gama grande de valores. Utilizamos a biblioteca Standard Scaler do scikit-learn para padronizar a feature *Amount*. A ideia de utilizar essa transformação é fazer com que os valores da feature possua média 0 e devio padrão igual a 1. Transformando a distribuição da features em uma distribuição normal.
 
-### 4.2. Separar os dados normais dos dados fraudulentos.
+#### 4.2. Separar os dados normais dos dados fraudulentos.
 - O Auto Encoder foi treinado apenas com os dados não fraudulentos. Essa técnica é utilizada para que a Rede Neural aprenda a codificar apenas os dados não frauduletos. Após realizar o treinamento do Auto Encoder, o mesmo poderá codificar e decodificar as informações de uma transação normal com baixo valor de erro de reconstrução. Quando o Auto Encoder for codificar e decodificar uma transação fraudulenta, o valor do erro de reconstrução da transação será muito superior a média dos valores do erro de reconstrução das transações normais. Dessa forma utilizamos o Auto Encoder para detecção de anomalia.
 
-### 4.3. Separar dados de Treino e Teste.
+#### 4.3. Separar dados de Treino e Teste.
 
     Dimensionalidade dos dados:
     Treinamento: (227452, 29)
     Teste (Fraudulentos): (492, 30), Teste (Não Fraudulentos): (57355, 29)
 
 
-## 5. Autoencoder
+### 5. Autoencoder
 
-### 5.1. Introdução
+#### 5.1. Introdução
 
 Para o treinamento do Autoencoder são utilizados apenas os dados referentes às transações não fraudulentas. Durante o treinamento, o codificador verá milhões de transações não fraudulentas com cartão de crédito.
 
@@ -142,7 +142,7 @@ Por outro lado, instâncias de dados com valores de perda abaixo desse limite po
 
 
 
-### 5.2. Construção do Auto Encoder utilizando o framework Keras
+#### 5.2. Construção do Auto Encoder utilizando o framework Keras
 - Utilizamos duas camadas de codificação e duas camadas de decodificação. As funções de ativação que utilizamos foi a ReLu. Utilizamos o otimizador Adam, e a função de perda MSE.
 
 ```python
@@ -170,7 +170,7 @@ checkpointer = ModelCheckpoint(filepath="./model/model.h5", verbose=0, save_best
 tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=True)
 ```
 
-### 5.3. Sumário da Rede Neural
+#### 5.3. Sumário da Rede Neural
 
     Model: "model"
     _________________________________________________________________
@@ -196,7 +196,7 @@ tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, 
     _________________________________________________________________
 
 
-### 5.4. Treinamento do Auto Encoder
+#### 5.4. Treinamento do Auto Encoder
 - Após o treinamento, o modelo foi salvo no diretório ```/model```
 
 ```python
@@ -211,86 +211,26 @@ history = autoencoder.fit(X_train, X_train,
                           verbose=1).history
 ```
 
-### 5.5. Gráfico de Erro de Validação do Modelo
+#### 5.5. Gráfico de Erro de Validação do Modelo
 
 ![png](images/output_43_0.png)
 
-## 6. Predição
+### 6. Predição
 
-### 6.1. Demonstração dos erros de reconstrução nos dados de Teste
-
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>reconstruction_error</th>
-      <th>true_class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>count</th>
-      <td>57355.000000</td>
-      <td>57355.000000</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>0.965397</td>
-      <td>0.008578</td>
-    </tr>
-    <tr>
-      <th>std</th>
-      <td>4.935987</td>
-      <td>0.092221</td>
-    </tr>
-    <tr>
-      <th>min</th>
-      <td>0.053520</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>25%</th>
-      <td>0.276356</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>50%</th>
-      <td>0.434653</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>75%</th>
-      <td>0.683521</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>max</th>
-      <td>263.731904</td>
-      <td>1.000000</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+#### 6.1. Demonstração dos erros de reconstrução nos dados de Teste
 
 ![png](images/output_49_0.png)
 
 
 **Análise**: Os erros de reconstrução, em sua maioria, são valores baixos, visto que representam as transações não fraudulentas. Já a grande parte dos erros mais altos é representativa das transações fraudulentas. Para a definição de melhor valor limite para diferenciar as transações fraudulentas das não fraudulentas, é preciso utilizar algumas métricas.
 
-## 7. Métricas
+### 7. Métricas
 
-### 7.1 Precisão vs Revocação (Recall)
+#### 7.1 Precisão vs Revocação (Recall)
 
-<img width="303" height="604" src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Precis%C3%A3o_e_revoca%C3%A7%C3%A3o.png" />
+<img width="303" height="200" src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Precis%C3%A3o_e_revoca%C3%A7%C3%A3o.png" />
 
 Precisão e Recall são definidos das seguintes maneiras:
-
-$$\text{Precisão} = \frac{\text{verdadeiros positivos}}{\text{verdadeiros positivos} + \text{falsos positivos}}$$
-
-$$\text{Revocação} = \frac{\text{verdadeiros positivos}}{\text{verdadeiros positivos} + \text{falsos negativos}}$$
 
 **Precisão** (também chamada de valor preditivo positivo) é a fração de instâncias recuperadas que são relevantes.
 
@@ -300,17 +240,15 @@ Tanto precisão quanto revocação são, portanto, bases para o estudo e compree
 
 Alto recall, mas baixa precisão significa muitos resultados, a maioria dos quais tem pouca ou nenhuma relevância. Quando a precisão é alta, mas o recall é baixo, temos o oposto - poucos resultados retornados com uma relevância muito alta. Normalmente, o resultado ideal seria ter uma alta precisão e alto recall.
 
-### 7.2 F1 Score
+#### 7.2 F1 Score
 
 F1 Score é uma medida que combina precisão e revocação é a média harmónica entre precisão e revocação
-
-$${\displaystyle F1=2\cdot {\frac {\mathrm {precisão} \cdot \mathrm {revocação} }{\mathrm {precisão} +\mathrm {revocação} }}}$$
 
 Esta medida é aproximadamente a média de ambas quando seus valores estão próximos, e de maneira mais geral, o quadrado da média geométrica dividido pela média aritmética. Há várias razões pelas quais o F1 Score pode ser criticado em casos específicos devido ao seu viés como métrica de avaliação.
 
 **Fonte**: https://pt.wikipedia.org/wiki/Precis%C3%A3o_e_revoca%C3%A7%C3%A3o
 
-### 7.3 Comparação das métricas para o modelo gerado
+#### 7.3 Comparação das métricas para o modelo gerado
 
 ![png](images/output_57_0.png)
 
@@ -325,7 +263,7 @@ Esta medida é aproximadamente a média de ambas quando seus valores estão pró
 
 
 
-#### 7.3.1. Valor balanceado entre Precisão e Revocação
+##### 7.3.1. Valor balanceado entre Precisão e Revocação
 - Utilizando um threshold que otimiza o valor da métrica F1-Score, balanceado entre precisão e Revocação
 ```
     Valor máximo de  F1 Score:  0.4805945499587118
@@ -334,7 +272,7 @@ Esta medida é aproximadamente a média de ambas quando seus valores estão pró
 ![png](images/output_65_0.png)
 
 
-### 7.3. Matriz de Confusão
+#### 7.3. Matriz de Confusão
 - O valor de Threshold utilizado foi o valor que representa o maior resultado para a métrica de F1-Score.
 
 ![png](images/output_67_0.png)
@@ -351,7 +289,7 @@ Esta medida é aproximadamente a média de ambas quando seus valores estão pró
     
 
 
-#### AJUSTE FINO: Otimizando valor de Threshold para melhor resultado de Revocação
+### AJUSTE FINO: Otimizando valor de Threshold para melhor resultado de Revocação
 - O objetivo é minimizar o falso negativo, o caso de ser uma transaçãão fraudulenta e o algoritmo predizer que é uma transaçãão normal. Threshold igual a 3.2.
 
 ![png](images/output_71_0.png)
